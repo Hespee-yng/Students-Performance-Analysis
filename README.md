@@ -307,7 +307,7 @@ WHERE
 - **Test Preparation Course**: Among total of 1000 students, only 358 students took the test preparation course.
 - **Scores Above 70**: 306 0f 1000 students scored more than 70 in each subect.
 - **Top 10%**: 42 students are consistently in top 10% in each subect.
-- **Best Performers** 3 students earned full scores across all subjects.  
+- **Best Performers**: 3 students earned full scores across all subjects.  
   
   
 ### Thank You.
