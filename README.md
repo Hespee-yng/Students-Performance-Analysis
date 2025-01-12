@@ -1,227 +1,314 @@
-# Retail Sales Analysis SQL Project
+# Students Performance Analysis - SQL Project  
 
-## Project Overview
+## Project Overview  
 
-**Project Title**: Retail Sales Analysis  
-**Level**: Beginner  
-**Database**: `p1_retail_db`
-
-This project is designed to demonstrate SQL skills and techniques typically used by data analysts to explore, clean, and analyze retail sales data. The project involves setting up a retail sales database, performing exploratory data analysis (EDA), and answering specific business questions through SQL queries. This project is ideal for those who are starting their journey in data analysis and want to build a solid foundation in SQL.
+This project is designed to demonstrate SQL skills and techniques typically used by data analysts to explore, clean, and analyze retail sales data. The project involves setting up a students performance database, performing exploratory data analysis (EDA), and answering specific questions using SQL queries. 
 
 ## Objectives
 
-1. **Set up a retail sales database**: Create and populate a retail sales database with the provided sales data.
-2. **Data Cleaning**: Identify and remove any records with missing or null values.
+1. **Set up a students performance database**: Create and populate a students performance database with the downloaded students performance data.
+2. **Data Cleaning**: Identify and remove any records with missing or null values, adjust incorrect spellings and duplicate files if any.
 3. **Exploratory Data Analysis (EDA)**: Perform basic exploratory data analysis to understand the dataset.
-4. **Business Analysis**: Use SQL to answer specific business questions and derive insights from the sales data.
+4. **Business Analysis**: Use SQL to answer specific questions and derive insights from the students performance data.
 
 ## Project Structure
 
 ### 1. Database Setup
 
-- **Database Creation**: The project starts by creating a database named `p1_retail_db`.
-- **Table Creation**: A table named `retail_sales` is created to store the sales data. The table structure includes columns for transaction ID, sale date, sale time, customer ID, gender, age, product category, quantity sold, price per unit, cost of goods sold (COGS), and total sale amount.
+- **Database Creation**: The project starts by creating a database named `studentsdb`.
+- **Table Creation**: A table named `students_performance` is created to store the students performance data. The table structure includes columns for gender, race/ethnicity, parental level of education,	lunch, test preparation course, math score, reading score and writing score.
 
 ```sql
-CREATE DATABASE p1_retail_db;
+CREATE DATABASE studentsDB;;
 
-CREATE TABLE retail_sales
-(
-    transactions_id INT PRIMARY KEY,
-    sale_date DATE,	
-    sale_time TIME,
-    customer_id INT,	
-    gender VARCHAR(10),
-    age INT,
-    category VARCHAR(35),
-    quantity INT,
-    price_per_unit FLOAT,	
-    cogs FLOAT,
-    total_sale FLOAT
+CREATE TABLE students_performance (
+    gender VARCHAR(8),
+    race_or_ethnicity VARCHAR(10),
+    parental_level_of_education VARCHAR(20),
+    lunch VARCHAR(15),
+    test_preparation_course VARCHAR(10),
+    math_score INT,
+    reading_score INT,
+    writing_score INT
 );
 ```
 
 ### 2. Data Exploration & Cleaning
 
+- **Null Value Check**: Check for any null values in the dataset.
+- **Unique Value Check**: Check unique values to spot potential spelling errors.
 - **Record Count**: Determine the total number of records in the dataset.
-- **Customer Count**: Find out how many unique customers are in the dataset.
-- **Category Count**: Identify all unique product categories in the dataset.
-- **Null Value Check**: Check for any null values in the dataset and delete records with missing data.
+- **Max, Min, Avg Scores Check**: Calculate the maximum, minimum and average of exam scores.
 
 ```sql
-SELECT COUNT(*) FROM retail_sales;
-SELECT COUNT(DISTINCT customer_id) FROM retail_sales;
-SELECT DISTINCT category FROM retail_sales;
+SELECT * FROM students_performance
+WHERE
+    gender IS NULL
+    OR race_or_ethnicity IS NULL
+    OR parental_level_of_education IS NULL
+    OR lunch IS NULL
+    OR test_preparation_course IS  NULL
+    OR math_score IS NULL
+    OR reading_score IS NULL
+    OR writing_score IS NULL;
 
-SELECT * FROM retail_sales
-WHERE 
-    sale_date IS NULL OR sale_time IS NULL OR customer_id IS NULL OR 
-    gender IS NULL OR age IS NULL OR category IS NULL OR 
-    quantity IS NULL OR price_per_unit IS NULL OR cogs IS NULL;
+SELECT DISTINCT(gender) FROM students_performance;
+SELECT DISTINCT(race_or_ethnicity) FROM students_performance;
+SELECT DISTINCT(parental_level_of_education) FROM students_performance;
+SELECT DISTINCT(lunch) FROM students_performance;
+SELECT DISTINCT(test_preparation_course) FROM students_performance;
+SELECT DISTINCT(reading_score) FROM students_performance;
+SELECT DISTINCT(math_score) FROM students_performance;
+SELECT DISTINCT(writing_score) FROM students_performance;
 
-DELETE FROM retail_sales
-WHERE 
-    sale_date IS NULL OR sale_time IS NULL OR customer_id IS NULL OR 
-    gender IS NULL OR age IS NULL OR category IS NULL OR 
-    quantity IS NULL OR price_per_unit IS NULL OR cogs IS NULL;
+SELECT COUNT (*) FROM students_performance;
+
+SELECT
+    MAX(math_score) as max_math_score,
+    MAX(reading_score) max_reading_score,
+    MAX(writing_score) max_writing_score,
+    MIN(math_score) min_math_score,
+    MIN(reading_score) min_reading_score,
+    MIN(writing_score) min_writing_score,
+    AVG(math_score)::INT avg_math_score,
+    AVG(reading_score)::INT avg_reading_score,
+    AVG(writing_score)::INT avg_writing_score
+FROM
+    students_performance;
 ```
 
 ### 3. Data Analysis & Findings
 
-The following SQL queries were developed to answer specific business questions:
+The following SQL queries were developed to answer each questions:
 
-1. **Write a SQL query to retrieve all columns for sales made on '2022-11-05**:
-```sql
-SELECT *
-FROM retail_sales
-WHERE sale_date = '2022-11-05';
-```
-
-2. **Write a SQL query to retrieve all transactions where the category is 'Clothing' and the quantity sold is more than 4 in the month of Nov-2022**:
-```sql
-SELECT 
-  *
-FROM retail_sales
-WHERE 
-    category = 'Clothing'
-    AND 
-    TO_CHAR(sale_date, 'YYYY-MM') = '2022-11'
-    AND
-    quantity >= 4
-```
-
-3. **Write a SQL query to calculate the total sales (total_sale) for each category.**:
-```sql
-SELECT 
-    category,
-    SUM(total_sale) as net_sale,
-    COUNT(*) as total_orders
-FROM retail_sales
-GROUP BY 1
-```
-
-4. **Write a SQL query to find the average age of customers who purchased items from the 'Beauty' category.**:
+1. **Write a query to list all students who scored above 90 in math.**:
 ```sql
 SELECT
-    ROUND(AVG(age), 2) as avg_age
-FROM retail_sales
-WHERE category = 'Beauty'
+    *
+FROM
+    students_performance
+WHERE
+    math_score > 90
+ORDER BY
+    1;
 ```
 
-5. **Write a SQL query to find all transactions where the total_sale is greater than 1000.**:
+2. **Write a query to find the number of students who completed the test preparation course.**:
 ```sql
-SELECT * FROM retail_sales
-WHERE total_sale > 1000
+SELECT
+    COUNT(*) as number_of_students
+FROM
+    students_performance
+WHERE
+    test_preparation_course = 'completed';
 ```
 
-6. **Write a SQL query to find the total number of transactions (transaction_id) made by each gender in each category.**:
+3. **Write a query to calculate the average writing score for each parental level of education.**:
 ```sql
-SELECT 
-    category,
+SELECT
+    parental_level_of_education,
+    AVG(writing_score)::INT as avg_writing_score
+FROM
+    students_performance
+GROUP BY
+    1;
+```
+
+4. **Write a query to find the highest and lowest scores in reading for each gender.**:
+```sql
+SELECT
     gender,
-    COUNT(*) as total_trans
-FROM retail_sales
-GROUP 
-    BY 
-    category,
-    gender
-ORDER BY 1
+    MAX(reading_score) as highest_score,
+    MIN(reading_score) as lowest_score
+FROM
+    students_performance
+GROUP BY
+    1;
 ```
 
-7. **Write a SQL query to calculate the average sale for each month. Find out best selling month in each year**:
+5. **Write a query to count the number of students in each race/ethnicity group.**:
 ```sql
-SELECT 
-       year,
-       month,
-    avg_sale
-FROM 
-(    
-SELECT 
-    EXTRACT(YEAR FROM sale_date) as year,
-    EXTRACT(MONTH FROM sale_date) as month,
-    AVG(total_sale) as avg_sale,
-    RANK() OVER(PARTITION BY EXTRACT(YEAR FROM sale_date) ORDER BY AVG(total_sale) DESC) as rank
-FROM retail_sales
-GROUP BY 1, 2
-) as t1
-WHERE rank = 1
+SELECT
+    race_or_ethnicity,
+    COUNT(*) as number_of_students
+FROM
+    students_performance
+GROUP BY
+    1
+ORDER BY
+    1;
 ```
 
-8. **Write a SQL query to find the top 5 customers based on the highest total sales **:
+6. **Write a query to determine the total number of students who scored above 70 in all subjects.**:
 ```sql
-SELECT 
-    customer_id,
-    SUM(total_sale) as total_sales
-FROM retail_sales
-GROUP BY 1
-ORDER BY 2 DESC
-LIMIT 5
+SELECT
+    COUNT(*) as number_of_students
+FROM
+    students_performance
+WHERE
+    math_score > 70
+    AND reading_score > 70
+    AND writing_score > 70;
 ```
 
-9. **Write a SQL query to find the number of unique customers who purchased items from each category.**:
+7. **Write a query to calculate the average math, reading, and writing scores for students who completed the test preparation course.**:
 ```sql
-SELECT 
-    category,    
-    COUNT(DISTINCT customer_id) as cnt_unique_cs
-FROM retail_sales
-GROUP BY category
+SELECT
+    AVG(math_score)::INT as avg_math_score,
+    AVG(reading_score)::INT as avg_reading_score,
+    AVG(writing_score)::INT as avg_writing_score
+FROM
+    students_performance
+WHERE
+    test_preparation_course = 'completed';
 ```
 
-10. **Write a SQL query to create each shift and number of orders (Example Morning <12, Afternoon Between 12 & 17, Evening >17)**:
+8. **Write a query to find students who scored below 50 in at least one subject.**:
 ```sql
-WITH hourly_sale
-AS
-(
-SELECT *,
-    CASE
-        WHEN EXTRACT(HOUR FROM sale_time) < 12 THEN 'Morning'
-        WHEN EXTRACT(HOUR FROM sale_time) BETWEEN 12 AND 17 THEN 'Afternoon'
-        ELSE 'Evening'
-    END as shift
-FROM retail_sales
+SELECT
+    *
+FROM
+    students_performance
+WHERE
+    math_score < 50
+    OR reading_score < 50
+    OR writing_score < 50;
+```
+
+9. **Write a query to retrieve the records of students who scored above 80 in both reading and writing.**:
+```sql
+SELECT
+    *
+FROM
+    students_performance
+WHERE
+    reading_score > 80
+    AND writing_score > 80;
+```
+
+10. **Write a query to display the records of students with a math score above 90 but a reading score below 60.**:
+```sql
+SELECT
+    *
+FROM
+    students_performance
+WHERE
+    math_score > 90
+    AND reading_score < 60;	
+```
+
+11. **Write a query to identify students from group C who completed the test preparation course and scored above 85 in math.**:
+```sql
+SELECT 
+    *
+FROM
+    students_performance
+WHERE
+    race_or_ethnicity = 'group C'
+    AND test_preparation_course = 'completed'
+    AND math_score > 85;
+```
+
+12. **Write a query to find all students whose scores are within the top 10% for each subject.**:
+```sql
+WITH percentile as (
+    SELECT
+        PERCENTILE_CONT(0.9) WITHIN GROUP (ORDER BY math_score) as math_90th_percentile,
+        PERCENTILE_CONT(0.9) WITHIN GROUP (ORDER BY reading_score) as reading_90th_percentile,
+        PERCENTILE_CONT(0.9) WITHIN GROUP (ORDER BY writing_score) as writing_90th_percentile
+    FROM
+        students_performance
 )
-SELECT 
-    shift,
-    COUNT(*) as total_orders    
-FROM hourly_sale
-GROUP BY shift
+SELECT
+    s.*
+FROM
+    students_performance s
+    JOIN percentile c
+        ON s.math_score > c.math_90th_percentile
+            AND s.reading_score > c.reading_90th_percentile
+            AND s.writing_score > c.writing_90th_percentile;
 ```
+
+13. **Write a query to rank students by their total score (sum of math, reading, and writing scores).**:
+```sql
+SELECT 
+    *,
+    math_score + reading_score + writing_score as total_score,
+    DENSE_RANK() OVER (ORDER BY math_score + reading_score + writing_score DESC) as rank
+FROM
+    students_performance;
+```
+
+14. **Write a query to group students by gender and calculate the percentage of students in each category who completed the test preparation course.**:
+```sql
+SELECT
+    gender,
+    ROUND(
+        SUM(CASE
+                WHEN test_preparation_course = 'completed' THEN 1
+                ELSE 0
+            END)::DECIMAL/COUNT(test_preparation_course), 2)*100 as percent_completed_test_course
+FROM
+    students_performance
+GROUP BY
+    1;
+```
+
+15. **Write a query to find the students whose math score is greater than the overall average math score.**:
+```sql
+WITH avg_math_score as (
+    SELECT
+        ROUND(AVG(math_score), 2) as avg_score
+    FROM
+        students_performance
+)
+SELECT
+    *
+FROM
+    students_performance s
+    JOIN avg_math_score a
+        ON s.math_score > a.avg_score;
+```
+
+16. **Write a query to determine which demographic group has the highest proportion of high scorers (above 90 in all subjects).**:
+```sql
+WITH high_scorers AS (
+    SELECT
+        race_or_ethnicity,
+        ROUND(
+            SUM(CASE
+                    WHEN math_score > 90 AND reading_score > 90 AND writing_score > 90 THEN 1
+                    ELSE 0
+                END)::DECIMAL/COUNT(race_or_ethnicity), 2) * 100 as percentage_high_scorers,
+        dense_rank() OVER (ORDER BY 
+            ROUND(
+                SUM(CASE
+                        WHEN math_score > 90 AND reading_score > 90 AND writing_score > 90 THEN 1
+                        ELSE 0
+                    END)::DECIMAL/COUNT(race_or_ethnicity), 2) * 100 DESC) AS rank
+    FROM
+        students_performance
+    GROUP BY
+        1)
+SELECT
+    race_or_ethnicity,
+    percentage_high_scorers
+FROM
+    high_scorers
+WHERE
+    rank = 1;
+```
+
 
 ## Findings
 
-- **Customer Demographics**: The dataset includes customers from various age groups, with sales distributed across different categories such as Clothing and Beauty.
-- **High-Value Transactions**: Several transactions had a total sale amount greater than 1000, indicating premium purchases.
-- **Sales Trends**: Monthly analysis shows variations in sales, helping identify peak seasons.
-- **Customer Insights**: The analysis identifies the top-spending customers and the most popular product categories.
-
-## Reports
-
-- **Sales Summary**: A detailed report summarizing total sales, customer demographics, and category performance.
-- **Trend Analysis**: Insights into sales trends across different months and shifts.
-- **Customer Insights**: Reports on top customers and unique customer counts per category.
-
-## Conclusion
-
-This project serves as a comprehensive introduction to SQL for data analysts, covering database setup, data cleaning, exploratory data analysis, and business-driven SQL queries. The findings from this project can help drive business decisions by understanding sales patterns, customer behavior, and product performance.
-
-## How to Use
-
-1. **Clone the Repository**: Clone this project repository from GitHub.
-2. **Set Up the Database**: Run the SQL scripts provided in the `database_setup.sql` file to create and populate the database.
-3. **Run the Queries**: Use the SQL queries provided in the `analysis_queries.sql` file to perform your analysis.
-4. **Explore and Modify**: Feel free to modify the queries to explore different aspects of the dataset or answer additional business questions.
-
-## Author - Zero Analyst
-
-This project is part of my portfolio, showcasing the SQL skills essential for data analyst roles. If you have any questions, feedback, or would like to collaborate, feel free to get in touch!
-
-### Stay Updated and Join the Community
-
-For more content on SQL, data analysis, and other data-related topics, make sure to follow me on social media and join our community:
-
-- **YouTube**: [Subscribe to my channel for tutorials and insights](https://www.youtube.com/@zero_analyst)
-- **Instagram**: [Follow me for daily tips and updates](https://www.instagram.com/zero_analyst/)
-- **LinkedIn**: [Connect with me professionally](https://www.linkedin.com/in/najirr)
-- **Discord**: [Join our community to learn and grow together](https://discord.gg/36h5f2Z5PK)
-
-Thank you for your support, and I look forward to connecting with you!
+- **Top Scorers by Demographic**: Group E has the most proportion of top scorers (students who score above 90 in each subect).
+- **Math Score**: Only 50 out of 1000 students scored more than 90 in math.
+- **Test Preparation Course**: Among total of 1000 students, only 358 students took the test preparation course.
+- **Scores Above 70**: 306 0f 1000 students scored more than 70 in each subect.
+- **Top 10%**: 42 students are consistently in top 10% in each subect.
+- **Best Performers** 3 students earned full scores across all subjects.  
+  
+  
+### Thank You.
+- **LinkedIn**: [Connect with me professionally](https://www.linkedin.com/in/abdullahi-oyekanmi)
