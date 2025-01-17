@@ -5,15 +5,15 @@ CREATE DATABASE studentsDB;
 -- Create Table
 
 CREATE TABLE students_performance (
-					gender VARCHAR(8),
-					race_or_ethnicity VARCHAR(10),
-					parental_level_of_education VARCHAR(20),
-					lunch VARCHAR(15),
-					test_preparation_course VARCHAR(10),
-					math_score INT,
-					reading_score INT,
-					writing_score INT
-              );
+	gender VARCHAR(8),
+	race_or_ethnicity VARCHAR(10),
+	parental_level_of_education VARCHAR(20),
+	lunch VARCHAR(15),
+	test_preparation_course VARCHAR(10),
+	math_score INT,
+	reading_score INT,
+	writing_score INT
+);
 
 
 
@@ -264,9 +264,9 @@ SELECT
 	gender,
 	ROUND(
 		SUM(CASE
-				WHEN test_preparation_course = 'completed' THEN 1
-				ELSE 0
-			END)::DECIMAL/COUNT(test_preparation_course), 2)*100 as percent_completed_test_course
+			WHEN test_preparation_course = 'completed' THEN 1
+			ELSE 0
+		END)::DECIMAL/COUNT(test_preparation_course), 2)*100 as percent_completed_test_course
 FROM
 	students_performance
 GROUP BY
@@ -295,15 +295,15 @@ WITH high_scorers AS (
 		race_or_ethnicity,
 		ROUND(
 			SUM(CASE
-					WHEN math_score > 90 AND reading_score > 90 AND writing_score > 90 THEN 1
-					ELSE 0
-				END)::DECIMAL/COUNT(race_or_ethnicity), 2) * 100 as percentage_high_scorers,
+				WHEN math_score > 90 AND reading_score > 90 AND writing_score > 90 THEN 1
+				ELSE 0
+			END)::DECIMAL/COUNT(race_or_ethnicity), 2) * 100 as percentage_high_scorers,
 		dense_rank() OVER (ORDER BY 
 			ROUND(
 				SUM(CASE
-						WHEN math_score > 90 AND reading_score > 90 AND writing_score > 90 THEN 1
-						ELSE 0
-					END)::DECIMAL/COUNT(race_or_ethnicity), 2) * 100 DESC) AS rank
+					WHEN math_score > 90 AND reading_score > 90 AND writing_score > 90 THEN 1
+					ELSE 0
+				END)::DECIMAL/COUNT(race_or_ethnicity), 2) * 100 DESC) AS rank
 	FROM
 		students_performance
 	GROUP BY
